@@ -1,2 +1,2 @@
-USER = 'ashiroq@gmail.com'
+USER = '****************'
 PASSWORD = '********************'
