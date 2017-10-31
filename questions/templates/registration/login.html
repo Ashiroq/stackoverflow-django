@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+  <title>Log In</title>
+  <style>
+    .form-field {
+      width: 400px !important;
+    }
+
+    .form-field > input {
+        width: 390px !important;
+    }
+  </style>
+{% endblock head %}
+
+{% block left %}
+  <form method="post">
+    <h2 class="form-title">Login</h2>
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-field">{{ field.label_tag }}{{ field }}{{ field.errors }}</div>
+    {% endfor %}
+    <div class="form-field">
+      <button type="submit">Login</button>
+    </div>
+  </form>
+{% endblock left %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %} 
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/question.css' %}">
+    <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+    <title>{% if question %}{{ question.title }}{% endif %}</title>
+{% endblock head %}
+
+{% block content %}
+<div class="left">
+    {% if question %}
+    <div class="question">
+        {% if user.id == question.owner.id %}
+            <div class="question-options">
+                <a href="{% url 'questions:question_delete' question.id %}" class="delete-question" ><i class="fa fa-close fa-2x"></i></a>
+                <a href="{% url 'questions:question_edit' question.id %}" class="edit-question"><i class="fa fa-edit fa-2x"></i></a>
+            </div>
+        {% endif %}
+        <div class="question-side">
+
+        </div>
+        <div class="question-content">
+            <div class="question-header">
+                <a class="question-title" href="{% url 'questions:question' question.id %}" class='question-title'>{{ question.title }}</a>
+            </div>
+            <p class="question-text">{{ question.text }}</p>
+            <div class="TesT">
+                <div class="question-data">
+                    {% if question.tags %}
+                        <div class="question-tags">
+                            {% for t in question.tags %}
+                                <a class='tag' href="#">{{ t }}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="creation-time">
+                        {{ question.creation_time }}
+                    </div>
+                    <div class='owner'>
+                        <a href="{% url 'questions:user' question.owner.id %}"><img class='avatar' src='{{ MEDIA_URL }}{{ question.owner.userprofile.avatar }}' alt='avatar' /></a>
+                        <a href="{% url 'questions:user' question.owner.id %}" class="username">{{ question.owner }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %} 
+    <div class="answers">
+        <h4>{{ answers.count }} Answer{{ answers.count|pluralize }}</h4>
+        {% for answer in answers %}
+        <div class="answer" id="{{ answer.id }}">
+            {% if user.id == answer.owner.id %}
+                <div class="answer-options">
+                    <a href="{% url 'questions:answer_delete' answer.question.id answer.id %}" class="delete-answer" ><i class="fa fa-close fa-2x"></i></a>
+                    <a href="{% url 'questions:answer_edit' answer.question.id answer.id %}" class="edit-answer"><i class="fa fa-edit fa-2x"></i></a>
+                </div>
+            {% endif %}
+            <div class="answer-side">
+                {% if answer.is_accepted %}
+                    <span class="accepted-answer"><i class="fa fa-check fa-3x" aria-hidden="true"></i></span>
+                {% endif %}
+
+                {% if user.id == question.owner.id and not answer.is_accepted %}
+                    <a href="{% url 'questions:answer_accept' question.id answer.id %}" class="accept-answer"><i class="fa fa-check fa-3x" aria-hidden="true"></i></a>
+                {% endif %}
+            </div>
+            <div class="answer-content">
+                <p class="answer-text">{{ answer.text }}</p>
+                <div class="answer-data">
+                    <div class="creation-time">
+                        {{ answer.creation_time }}
+                    </div>
+                    <div class='owner'>
+                        <a href="{% url 'questions:user' answer.owner.id %}"><img class='avatar' src='{{ MEDIA_URL }}{{ answer.owner.userprofile.avatar }}' alt='avatar' /></a>
+                        <a href="{% url 'questions:user' answer.owner.id %}" class="username">{{ answer.owner }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div class="message">
+                <p>There are no answers right now. Be first!</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="answer-form">
+        <form action='answer/' method="POST">
+            <h2 class="form-title">Post your answer</h2>
+            {% if not user.is_authenticated %}
+                <h3 class='form-subtitle'>You must log in to post an answer</h3>
+            {% endif %}
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field">{{ field.label_tag }}{{ field }}</div>
+            {% endfor %}
+            <div class="form-field">
+                <button type="submit">Post Answer</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="right">
+    <a id="ask-button" class="outline-button" href="{% url 'questions:ask' %}">Ask Question</a>
+</div>
+{% endblock content %}

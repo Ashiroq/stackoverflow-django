@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+    <title>{{ question.title }}</title>
+    <style>
+        textarea {
+            resize: vertical;
+            height: 150px;
+        }
+    </style>
+{% endblock head %}
+
+{% block left %}
+    <form method="post">
+        <h2 class="form-title">Are you sure you want to delete this question?</h2>
+        {% csrf_token %}
+        <div class="form-field">
+            <strong>Title:</strong><input type="text" readonly value="{{ question.title }}" />
+        </div>
+        <div class="form-field">
+            <strong>Text:</strong><textarea readonly>{{ question.text }}</textarea>
+        </div>
+        <div class="form-field">
+            <stron>Tags: </stron>
+            {% comment %} <input type="text" readonly value="{{ question.tags }}" /> {% endcomment %}
+            {% for t in question.tags %}
+                <a class="tag">{{ t }}</a>
+            {% endfor %}
+        </div>
+        <div class="form-field">
+            <strong>Author: </strong><p><a href="{% url 'questions:user' question.owner.id %}">{{ question.owner.username }}</a></p>
+        </div>
+        <div class="form-field">
+            <button type="submit">Confirm</button>
+            <a href="{% url 'questions:question' question.id %}">Cancel</a>  
+        </div>
+    </form>
+{% endblock left %}

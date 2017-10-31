@@ -1,0 +1,66 @@
+.form-title, .form-subtitle {
+    text-align: center;
+}
+
+.form-subtitle {
+    font-weight: 600;
+    color: #292929;
+}
+
+button[type=submit] {
+    width: 110px;
+    height: 40px;
+    background-color: #1654C7;
+    padding: 5px;
+    color: #fafafb !important;
+    text-align: center;
+    border: 0px;
+    margin: 0 auto;
+    display: block;
+}
+
+button[type=submit]:hover {
+    background-color: #3672DB;
+}
+
+.form-field {
+    width: 600px;
+    margin: 5px auto;
+}
+
+.form-field input {
+    height: 40px;
+}
+
+.form-field input[type=text], .form-field input[type=password], .form-field input[type=email], .form-field textarea {
+    width: 590px;
+    padding: 5px;
+}
+
+.errorlist {
+    color: red;
+    list-style-type: none;
+    display: inline-block;
+}
+
+.form-messages {
+    margin-top: 40px;
+}
+
+.image-field > .image-field-current > img {
+    display: block;
+}
+
+.image-field > .image-field-upload > input[type=file] {
+    display: block;
+}
+
+.image-field-current {
+    display: inline-block;
+    margin: 10px 0px 0px 50px;
+}
+
+.image-field-upload {
+    float: right;
+    margin: 10px 50px 0px 0px;
+}

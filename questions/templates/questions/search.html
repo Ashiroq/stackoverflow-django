@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/index.css' %}">
+    <title>Search</title>
+{% endblock head %}
+
+{% block left %}
+    <h2>Search results for query "{{ query }}"</h2>
+    <div class="menu">
+    </div>
+    {% if questions %}
+    <div id="questions">
+        {% for q in questions %}
+        <div class="question">
+            <div class="question-content">
+                <a href="{% url 'questions:question' q.id %}" class='question-title'>
+                    {{ q.title }}
+                </a>
+                <p>{{ q.text|truncatechars:180 }}</p>
+                <div class="question-data">
+                    <div class="creation-time">
+                        {{ q.creation_time }}
+                    </div>
+                    <div class='owner'>
+                        <a href="{% url 'questions:user' q.owner.id %}"><img class='avatar' src="{{ MEDIA_URL }}{{ q.owner.userprofile.avatar }}" alt='avatar' /></a>
+                        <a href="{% url 'questions:user' q.owner.id %}" class="username">{{ q.owner }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>There are no questions matching your query.</p>
+    {% endif %}
+{% endblock left %}

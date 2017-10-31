@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/user.css' %}">
+    <title>{{ profile.username }}</title>
+{% endblock head %}
+
+
+{% block left %}
+    <div class="avatar-container">
+        <img class="avatar" src="{{ MEDIA_URL }}{{ profile.userprofile.avatar.name }}" alt="avatar" />
+    </div>
+    <div class="profile-data">
+        <h1 class='username'>
+            {{ profile.username }}
+        </h1>
+        {% if profile.first_name or profile.last_name %}
+            <h3 class='name'>{{ profile.first_name }} {{ profile.last_name }}</h3>
+        {% endif %}
+        {% if profile.userprofile.description %}
+            <p class="profile-description">{{ profile.userprofile.description }}</p>
+        {% endif %}
+    </div>
+    {% if user == profile %}
+        <a class="edit-profile" href="{% url 'questions:user_edit' profile.id %}">Edit profile</a>
+        <a class="edit-profile" href="{% url 'questions:user_settings' profile.id %}">Account settings</a>
+    {% endif %}
+    <div class="questions section">
+        <h3 class="section-title">Recent questions:</h3>
+        {% for q in created_questions %}
+        <div class="question">
+            <div class="question-side"></div>
+            <div class="question-content">
+                <a href="{% url 'questions:question' q.id %}" class='question-title'>
+                    {{ q.title }}
+                </a>
+                <div class="creation-time">
+                    {{ q.creation_time }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="answers section">
+        <h3 class="section-title">Recent answers:</h3>
+        {% for answer in posted_answers %}
+        <div class="answer">
+            <div class="answer-side">
+                {% if answer.is_accepted %}
+                    <span class="accepted-answer"><i class="fa fa-check fa-2x" aria-hidden="true"></i></span>
+                {% endif %}
+            </div>
+            <div class="answer-content">
+                <a href="{% url 'questions:question' answer.question.id %}#{{ answer.id }}" class='question-title'>
+                    {{ answer.question.title }}
+                </a>
+                <div class="creation-time">
+                    {{ answer.creation_time }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock left %}
+
+{% block right %}
+    <div class="profile-details">
+        <div class="profile-stats">
+            <div class="stat-container">
+                <h3 class="stat-title">{{ created_questions.count }}</h3>
+                <div class="stat-subtitle">question{{ created_questions.count|pluralize }}</div>
+            </div>
+            <div class="stat-container">
+                <h3 class="stat-title">{{ posted_answers.count }}</h3>
+                <div class="stat-subtitle">answer{{ posted_answers.count|pluralize }}</div>
+            </div>
+        </div>
+        <ul class="profile-info">
+            {% if profile.userprofile.location %}
+                <li>Location: {{ profile.userprofile.location }}</li>
+            {% endif %}
+            {% for link in profile.userprofile.links %}
+                <li><a href="{{ link }}">{{ link }}</a></li>
+            {% endfor %}
+            <li>Member since {{ profile.date_joined|date:"d M Y" }}</li>
+            <li>Last seen {{ profile.last_login|date:"d M Y, h:ia" }}</li>
+        </ul>
+    </div>
+{% endblock right %}
+
+{% block ask_button %}{% endblock ask_button %}

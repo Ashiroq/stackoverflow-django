@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+    <title>{{ answer.question.title }}</title>
+    <style>
+        textarea {
+            resize: vertical;
+            height: 150px;
+        }
+    </style>
+{% endblock head %}
+
+{% block left %}
+    <form method="post">
+        <h2 class="form-title">Are you sure you want to delete this answer?</h2>
+        {% csrf_token %}
+        <div class="form-field">
+            <strong>Question:</strong><p>{{ answer.question }}</p>
+        </div>
+        <div class="form-field">
+            <strong>Text:</strong><textarea readonly>{{ answer.text }}</textarea>
+        </div>
+        <div class="form-field">
+            <strong>Author: </strong><p><a href="{% url 'questions:user' answer.owner.id %}">{{ answer.owner.username }}</a></p>
+        </div>
+        <div class="form-field">
+            <button type="submit">Confirm</button>
+            <a href="{% url 'questions:question' answer.question.id %}">Cancel</a>  
+        </div>
+    </form>
+{% endblock left %}

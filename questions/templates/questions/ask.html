@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+    <title>Ask Question</title>
+{% endblock head %}
+
+{% block left %}
+
+<form method="post">
+    <h2 class="form-title">Ask Question</h2>
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-field">{{ field.errors }}{{ field.label_tag }}{{ field }}</div>
+    {% endfor %}
+    <div class='form-field'>
+        <button type="submit">Submit</button>
+    </div>
+</form>
+{% endblock left %}

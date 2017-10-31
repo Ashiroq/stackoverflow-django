@@ -1,0 +1,79 @@
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'questions/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .search-form {
+            display: inline-block;
+        }
+        
+        .search-form > button[type=submit] {
+            right: 210px;
+            width: 45px;
+            height: 40px;
+            padding: 0px;
+            color: #444444 !important;
+            border: 0;
+            position: absolute;
+            top: 10px;
+            background-color: #fafafb !important;
+        }
+        
+        .search-form > button[type=submit]:hover {
+            background-color: #ECECEC !important;
+        }
+
+        .search-form input[type=text] {
+            width: 250px;
+            right: 255px;
+            height: 40px;
+            padding: 5px;
+            position: absolute;
+            top: 10px;
+        }
+    </style>
+    {% block head %}
+        <title>Stackoverflow</title>
+    {% endblock head %}
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1><a href="{% url 'questions:index' %}">Main page</a></h1>
+            <form class="search-form" action="{% url 'questions:search' %}" method="GET">
+                <input type="text" name="q" placeholder="Search...">
+                <button type="submit"><i class="fa fa-search fa-lg"></i></button>
+            </form>
+            {% if user.is_authenticated %}
+                <a class="white-button" href="{% url 'logout' %}">Log Out</a>
+                <a class="blue-button " href="{% url 'questions:user' user.id %}">{{ user.username }}</a>
+            {% else %}
+                <a class="white-button" href="{% url 'login' %}">Log In</a>
+                <a class="blue-button" href="{% url 'questions:register' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+    <div id="main">
+        <div id="content">
+            {% block content %}
+                <div class="left">
+                    {% block left %}{% endblock left %}
+                </div>
+                <div class="right">
+                    {% block ask_button %}
+                        <a id="ask-button" class="outline-button" href="{% url 'questions:ask' %}">Ask Question</a>
+                    {% endblock ask_button %}
+                    {% block right %}{% endblock right %}
+                </div>
+            {% endblock content %}
+            {% comment %} <div class="left">
+                {% block left %}{% endblock left %}
+            </div>
+            <div class="right">{% block right %}{% endblock right %}</div> {% endcomment %}
+        </div>
+    </div>
+    <footer>
+        <a href='http://github.com/ashiroq'>Github</a>
+    </footer>
+</body>

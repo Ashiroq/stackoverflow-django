@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'questions/forms.css' %}">
+    <title>{{ answer.question.title }}</title>
+{% endblock head %}
+
+{% block left %}
+    <form method="post">
+        <h2 class="form-title">Edit answer</h2>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class='form-field'>{{ field.label_tag }}{{ field }}</div>
+        {% endfor %}
+        <div class="form-field">
+            <button type="submit">Confirm</button>
+            <a href="{% url 'questions:question' answer.question.id %}">Cancel</a>
+        </div>
+    </form>
+{% endblock left %}

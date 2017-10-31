@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2 {
+    font-weight: 600;
+}
+
+html {
+    position: relative;
+    padding-bottom: 170px;
+}
+
+a:visited, a {
+    text-decoration: none;
+    color: #2424FF;
+}
+
+a:hover {
+    color: #62A5FC;
+}
+
+header h1 > a {
+    color: black !important;
+}
+
+header h1 > a:hover {
+    color: #111111;
+}
+
+h1 {
+    font-weight: 600;
+    display: inline-block;
+    height: 40px;
+    margin-top: 5px;
+}
+
+#main {
+    width: 1060px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #fafafb;
+    border-bottom: 1px rgba(82, 83, 83, 0.39) solid;
+    padding-bottom: 5px;
+}
+
+header > div {
+    width: 1060px;
+    margin: 0 auto;
+}
+
+header > .header-content {
+    width: 1060px;
+    height: 50px;
+    margin: 0 auto;
+    position: relative;
+}
+
+header > .header-content > h1 {
+    width: auto;
+}
+
+.blue-button {
+    width: 80px;
+    height: 30px;
+    background-color: #1654C7;
+    padding: 5px;
+    color: #fafafb !important;
+    text-align: center;
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.blue-button:hover {
+    background-color: #3672DB;
+}
+
+.white-button {
+    position: absolute;
+    width: 80px;
+    height: 30px;
+    padding: 5px;
+    text-align: center;
+    top: 10px;
+    right: 110px;
+    display: inline-block;
+}
+
+.white-button:hover {
+    background-color: #ECECEC;
+}
+
+.outline-button {
+    width: 100px;
+    height: 30px;
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    border: 1px solid;
+}
+
+#ask-button {
+    margin: 0 auto;
+    margin-top: 20px;
+    display: block;
+}
+
+.tag {
+    background-color: #1654C7;
+    padding: 3px 7px;
+    border-radius: 10px;
+    color: #fafafb !important;
+    display: inline-block;
+    margin: 1px 0px;
+}
+
+.tag:hover {
+    background-color: #3672DB;
+    color: #ECECEC !important;
+}
+
+.left {
+    width: 760px;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.right {
+    width: 270px;
+    float: right;
+    /* border-left: 1px rgba(124, 124, 124, 0.18) solid; */
+    padding-left: 5px;
+}
+
+footer {
+    background-color: #242729;
+    color: #6a737c;
+    text-align: center;
+    height: 150px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+footer a {
+    color: #6a737c !important;
+}
+
+footer a:hover {
+    color: #818B96;
+}
