@@ -56,24 +56,24 @@ def delete_avatar_file(sender, instance, **kwargs):
     if instance.avatar.name != 'avatars/default.png':
         default_storage.delete(instance.avatar.name)
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
 class Question(models.Model):
     title = models.CharField(max_length=200, null=False)
     text = models.TextField(null=False, editable=True)
     creation_time = models.DateTimeField()
     owner = models.ForeignKey(AuthUser)
-    tags = ArrayField(models.CharField(max_length=100), size=20, null=True)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def get_absolute_url(self):
         return '/questions/%i/' % self.id
 
     def __str__(self):
         return self.title
-
-    def tags_as_list(self):
-        if not self.tags:
-            return None
-        return self.tags
-
 
 class Answer(models.Model):
     text = models.TextField(null=False)
