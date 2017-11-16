@@ -280,4 +280,16 @@ class SearchView(generic.ListView):
         return Question.objects.annotate(
             search=SearchVector('title', 'text')
         ).filter(search=SearchQuery(self.request.GET['q']))
-        # return Question.objects.filter(tags__contained_by=self.request.GET['q'])
+
+class TaggedView(generic.ListView):
+    model = Question
+    template_name = 'questions/tagged.html'
+    context_object_name = 'questions'
+
+    def get_context_data(self, **kwargs):
+        context = super(TaggedView, self).get_context_data(**kwargs)
+        context['tag'] = self.kwargs['tag']
+        return context
+
+    def get_queryset(self):
+        return Question.objects.filter(tags__name=self.kwargs['tag'])
