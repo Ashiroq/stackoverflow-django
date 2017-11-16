@@ -136,6 +136,15 @@ class QuestionEditViewTests(TestCase):
         updated = Question.objects.get(pk=self.question.id)
         self.assertEqual(updated.title, 'testtesttest')
         self.assertEqual(updated.text, 'TesT')
+    
+    def test_can_edit_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        tag1 = Tag.objects.create(name='test')
+        tag2 = Tag.objects.create(name='lorem ipsum')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': [tag1.id, tag2.id]})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
 
     def test_cannot_edit_question_not_owner(self):
         """
@@ -193,6 +202,17 @@ class QuestionDeleteViewTests(TestCase):
         notremoved = Question.objects.get(pk=self.question.id)
         self.assertEquals(notremoved.title, self.question.title)
         self.assertEquals(notremoved.text, self.question.text)
+
+    def test_can_delete_question_with_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        question = Question.objects.create(title='test with tags', text='tags are awesome', creation_time=timezone.now(), owner=self.user)
+        question.tags.create(name='test')
+        question.tags.create(name='lorem ipsum')
+
+        url = reverse('questions:question_delete', args=(question.id,))
+        response = self.client.post(url)
+        with self.assertRaises(Question.DoesNotExist):
+            Question.objects.get(pk=question.id)
 
 class AnswerEditViewTests(TestCase):
 
@@ -312,6 +332,15 @@ class AskViewTests(TestCase):
         response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor'})
         added = Question.objects.get(title__exact='test')
         self.assertEqual(added.text, 'lorem ipsum dolor')
+
+    def test_asking_question_with_tags_logged(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        Tag.objects.create(name='test')
+        Tag.objects.create(name='lorem ipsum')
+        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor', 'tags': [1, 2]})
+        added = Question.objects.get(title__exact='test')
+        self.assertEqual(added.text, 'lorem ipsum dolor')
+        self.assertQuerysetEqual(added.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
 
     def test_asking_question_not_logged(self):
         response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'not added question'})
