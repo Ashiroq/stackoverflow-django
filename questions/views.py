@@ -14,7 +14,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery
 
 from .multiform import MultiFormsView
 from .models import Question, UserProfile, Answer
-from .forms import AnswerForm, RegisterForm, ProfileUpdateForm, UserUpdateForm, EmailChangeForm
+from .forms import AnswerForm, RegisterForm, ProfileUpdateForm, UserUpdateForm, EmailChangeForm, QuestionEditForm
 
 # Create your views here.
 class IndexView(generic.ListView):
@@ -222,11 +222,15 @@ class QuestionDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.Delete
         return self.request.user == Question.objects.get(pk=self.kwargs['pk']).owner
 
 class QuestionEditView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
-    model = Question
-    fields = ['title', 'text', 'tags']
+    # model = Question
+    # fields = ['title', 'text', 'tags']
+    form_class = QuestionEditForm
     template_name_suffix = '_edit'
     login_url = '/'
-    redirect_field_name = None
+    redirect_field_name = 'title'
+
+    def get_queryset(self):
+        return Question.objects.filter(pk=self.kwargs['pk'])
 
     def test_func(self):
         return self.request.user == Question.objects.get(pk=self.kwargs['pk']).owner
