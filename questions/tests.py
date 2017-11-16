@@ -132,19 +132,38 @@ class QuestionEditViewTests(TestCase):
         """
         self.client.login(username='test', password='T3Ss$tTx')
         url = reverse('questions:question_edit', args=(self.question.id,))
-        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT'})
+        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT', 'tags': ''})
         updated = Question.objects.get(pk=self.question.id)
         self.assertEqual(updated.title, 'testtesttest')
         self.assertEqual(updated.text, 'TesT')
     
-    def test_can_edit_tags(self):
+    def test_can_add_tags(self):
         self.client.login(username='test', password='T3Ss$tTx')
         url = reverse('questions:question_edit', args=(self.question.id,))
         tag1 = Tag.objects.create(name='test')
         tag2 = Tag.objects.create(name='lorem ipsum')
-        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': [tag1.id, tag2.id]})
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': 'test, lorem ipsum'})
         updated = Question.objects.get(pk=self.question.id)
         self.assertQuerysetEqual(updated.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
+
+    def test_can_edit_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        self.question.tags.create(name='test')
+        self.question.tags.create(name='lorem ipsum')
+        tag3 = Tag.objects.create(name='newtag')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': 'newtag'})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), ["<Tag: newtag>"], ordered=False)
+
+    def test_can_remove_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        self.question.tags.create(name='test')
+        self.question.tags.create(name='lorem ipsum')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': ''})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), [], ordered=False)
 
     def test_cannot_edit_question_not_owner(self):
         """
