@@ -14,7 +14,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery
 
 from .multiform import MultiFormsView
 from .models import Question, UserProfile, Answer
-from .forms import AnswerForm, RegisterForm, ProfileUpdateForm, UserUpdateForm, EmailChangeForm, QuestionEditForm
+from .forms import AnswerForm, RegisterForm, ProfileUpdateForm, UserUpdateForm, EmailChangeForm, QuestionEditForm, QuestionAskForm
 
 # Create your views here.
 class IndexView(generic.ListView):
@@ -202,10 +202,11 @@ class AddAnswer(LoginRequiredMixin, generic.CreateView):
 
 class AskView(LoginRequiredMixin, generic.CreateView):
     model = Question
-    fields = ['title', 'text', 'tags']
+    # fields = ['title', 'text', 'tags']
     template_name = 'questions/ask.html'
     login_url = '/login'
     redirect_field_name = None
+    form_class = QuestionAskForm
 
     def form_valid(self, form):
         form.instance.owner = self.request.user

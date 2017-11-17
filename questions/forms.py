@@ -24,24 +24,19 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ('username', 'email')
 
-class QuestionEditForm(forms.ModelForm):
+class QuestionAskForm(forms.ModelForm):
     tags = forms.CharField()
     class Meta:
         model = Question
         fields = ('title', 'text')
     
     def __init__(self, *args, **kwargs):
-        super(QuestionEditForm, self).__init__(*args, **kwargs)
-        """
-            Transforming tags queryset to string
-        """
-        tags_array = [t.name for t in kwargs['instance'].tags.all()]
-        self.fields['tags'].initial = ', '.join(tags_array)
+        super(QuestionAskForm, self).__init__(*args, **kwargs)
         self.fields['tags'].required = False
 
     def clean_tags(self):
         """
-            Transforming tags string to array with whitespace verification
+            Tags string to array with whitespace verification
         """
         tags_string = self.cleaned_data['tags'].strip()
         if tags_string == '':
@@ -63,6 +58,20 @@ class QuestionEditForm(forms.ModelForm):
                 self.tags.append(filtered)
             except Tag.DoesNotExist:
                 self.tags.append(Tag.objects.create(name=t))
+
+    def save(self, commit=True):
+        question = super(QuestionAskForm, self).save(commit=commit)
+        if self.tags is not None:
+            for t in self.tags:
+                question.tags.add(t)
+        return question
+
+class QuestionEditForm(QuestionAskForm):
+    def __init__(self, *args, **kwargs):
+        super(QuestionEditForm, self).__init__(*args, **kwargs)
+        # Tags queryset to string as CharField initial value
+        tags_array = [t.name for t in kwargs['instance'].tags.all()]
+        self.fields['tags'].initial = ', '.join(tags_array)
 
     def save(self, commit=True):
         question = super(QuestionEditForm, self).save(commit=commit)
