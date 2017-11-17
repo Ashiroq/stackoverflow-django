@@ -356,7 +356,7 @@ class AskViewTests(TestCase):
         self.client.login(username='test', password='T3Ss$tTx')
         Tag.objects.create(name='test')
         Tag.objects.create(name='lorem ipsum')
-        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor', 'tags': [1, 2]})
+        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor', 'tags': 'test, lorem ipsum'})
         added = Question.objects.get(title__exact='test')
         self.assertEqual(added.text, 'lorem ipsum dolor')
         self.assertQuerysetEqual(added.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
