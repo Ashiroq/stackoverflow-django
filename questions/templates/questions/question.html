@@ -29,8 +29,8 @@
                 <div class="question-data">
                     {% if question.tags %}
                         <div class="question-tags">
-                            {% for t in question.tags %}
-                                <a class='tag' href="#">{{ t }}</a>
+                            {% for t in question.tags.all %}
+                                <a class='tag' href="{% url 'questions:tagged' t.name %}">{{ t }}</a>
                             {% endfor %}
                         </div>
                     {% endif %}

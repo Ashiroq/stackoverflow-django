@@ -6,7 +6,7 @@ from django.contrib.auth import login
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django_resized.forms import ResizedImageFieldFile
 
-from .models import Question, Answer
+from .models import Question, Answer, Tag
 
 # Create your tests here.
 class IndexViewTests(TestCase):
@@ -132,10 +132,38 @@ class QuestionEditViewTests(TestCase):
         """
         self.client.login(username='test', password='T3Ss$tTx')
         url = reverse('questions:question_edit', args=(self.question.id,))
-        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT', 'tags': None})
+        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT', 'tags': ''})
         updated = Question.objects.get(pk=self.question.id)
         self.assertEqual(updated.title, 'testtesttest')
         self.assertEqual(updated.text, 'TesT')
+    
+    def test_can_add_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        tag1 = Tag.objects.create(name='test')
+        tag2 = Tag.objects.create(name='lorem ipsum')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': 'test, lorem ipsum'})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
+
+    def test_can_edit_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        self.question.tags.create(name='test')
+        self.question.tags.create(name='lorem ipsum')
+        tag3 = Tag.objects.create(name='newtag')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': 'newtag'})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), ["<Tag: newtag>"], ordered=False)
+
+    def test_can_remove_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        url = reverse('questions:question_edit', args=(self.question.id,))
+        self.question.tags.create(name='test')
+        self.question.tags.create(name='lorem ipsum')
+        response = self.client.post(url, {'title': 'Lorem ipsum?', 'text': 'Lorem ipsum.', 'tags': ''})
+        updated = Question.objects.get(pk=self.question.id)
+        self.assertQuerysetEqual(updated.tags.all(), [], ordered=False)
 
     def test_cannot_edit_question_not_owner(self):
         """
@@ -143,7 +171,7 @@ class QuestionEditViewTests(TestCase):
         """
         self.client.login(username='test2', password='T3Ss$tTx')
         url = reverse('questions:question_edit', args=(self.question.id,))
-        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT', 'tags': None})
+        response = self.client.post(url, {'title': 'testtesttest', 'text': 'TesT'})
         notupdated = Question.objects.get(pk=self.question.id)
         self.assertEqual(notupdated.title, self.question.title)
         self.assertEqual(notupdated.text, self.question.text)
@@ -193,6 +221,17 @@ class QuestionDeleteViewTests(TestCase):
         notremoved = Question.objects.get(pk=self.question.id)
         self.assertEquals(notremoved.title, self.question.title)
         self.assertEquals(notremoved.text, self.question.text)
+
+    def test_can_delete_question_with_tags(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        question = Question.objects.create(title='test with tags', text='tags are awesome', creation_time=timezone.now(), owner=self.user)
+        question.tags.create(name='test')
+        question.tags.create(name='lorem ipsum')
+
+        url = reverse('questions:question_delete', args=(question.id,))
+        response = self.client.post(url)
+        with self.assertRaises(Question.DoesNotExist):
+            Question.objects.get(pk=question.id)
 
 class AnswerEditViewTests(TestCase):
 
@@ -309,12 +348,21 @@ class AskViewTests(TestCase):
 
     def test_asking_question_logged(self):
         self.client.login(username='test', password='T3Ss$tTx')
-        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor', 'tags': None})
+        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor'})
         added = Question.objects.get(title__exact='test')
         self.assertEqual(added.text, 'lorem ipsum dolor')
 
+    def test_asking_question_with_tags_logged(self):
+        self.client.login(username='test', password='T3Ss$tTx')
+        Tag.objects.create(name='test')
+        Tag.objects.create(name='lorem ipsum')
+        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'lorem ipsum dolor', 'tags': [1, 2]})
+        added = Question.objects.get(title__exact='test')
+        self.assertEqual(added.text, 'lorem ipsum dolor')
+        self.assertQuerysetEqual(added.tags.all(), ["<Tag: test>", "<Tag: lorem ipsum>"], ordered=False)
+
     def test_asking_question_not_logged(self):
-        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'not added question', 'tags': None})
+        response = self.client.post(reverse('questions:ask'), {'title': 'test', 'text': 'not added question'})
         with self.assertRaises(Question.DoesNotExist):
             Question.objects.get(title__exact='test')
 
@@ -694,3 +742,36 @@ class SearchViewTests(TestCase):
         response = self.client.get(reverse('questions:search'), {'q': 'Lorem ipsum'})
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context['questions'], ['<Question: How do I do that>', '<Question: Lorem ipsum dolor sit amet>'], ordered=False)
+
+class TaggedViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='test', password='T3Ss$tTx')
+        self.user2 = User.objects.create_user(username='test2', password='T3Ss$tTx')
+        self.question1 = Question.objects.create(title="How do I do that", text="Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+                        creation_time=timezone.now(), owner=self.user)
+        self.question2 = Question.objects.create(title="Lorem ipsum dolor sit amet", text="test test test test test test test test test test",
+                creation_time=timezone.now(), owner=self.user)
+        self.tags1 = [
+            {'name': 'lorem ipsum'},
+            {'name': 'test'},
+            {'name': 'question1'}
+        ]
+        for tag in self.tags1:
+            self.question1.tags.create(**tag)
+        self.tags2 = [
+            {'name': 'tagged'},
+            {'name': 'question2'}
+        ]
+        for tag in self.tags2:
+            self.question2.tags.create(**tag)
+        self.question2.tags.add(Tag.objects.get(name__exact='lorem ipsum'))
+
+    def test_show_nothing(self):
+        response = self.client.get(reverse('questions:tagged', args=('qwerty',)))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['questions'], [])
+    
+    def test_standard_tag_search(self):
+        response = self.client.get(reverse('questions:tagged', args=('lorem ipsum',)))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['questions'], ["<Question: How do I do that>", "<Question: Lorem ipsum dolor sit amet>"], ordered=False)

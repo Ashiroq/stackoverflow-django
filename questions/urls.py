@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^questions/(?P<q_pk>[0-9]+)/(?P<pk>[0-9]+)/accept/$', views.accept_answer, name='answer_accept'),
     url(r'^questions/(?P<pk>[0-9]+)/delete/$', views.QuestionDeleteView.as_view(), name='question_delete'),
     url(r'^questions/(?P<pk>[0-9]+)/edit/$', views.QuestionEditView.as_view(), name='question_edit'),
+    url(r'^questions/tagged/(?P<tag>[\w\s\(\)]+)/$', views.TaggedView.as_view(), name='tagged'),
     url(r'^users/(?P<pk>[0-9]+)/$', views.UserView.as_view(), name='user'),
     url(r'^users/(?P<pk>[0-9]+)/edit/$', views.UserEditView.as_view(), name='user_edit'),
     # url(r'^users/(?P<pk>[0-9]+)/settings/$', views.account_settings, name='user_settings'),

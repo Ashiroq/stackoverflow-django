@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import ClearableFileInput
 from django.contrib.auth.models import User
 
-from .models import Answer, UserProfile, Question
+from .models import Answer, UserProfile, Question, Tag
 
 class CustomClearableFileInput(ClearableFileInput):
     template_name = 'custom_clearable_file_input.html'
@@ -24,6 +24,53 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ('username', 'email')
 
+class QuestionEditForm(forms.ModelForm):
+    tags = forms.CharField()
+    class Meta:
+        model = Question
+        fields = ('title', 'text')
+    
+    def __init__(self, *args, **kwargs):
+        super(QuestionEditForm, self).__init__(*args, **kwargs)
+        """
+            Transforming tags queryset to string
+        """
+        tags_array = [t.name for t in kwargs['instance'].tags.all()]
+        self.fields['tags'].initial = ', '.join(tags_array)
+        self.fields['tags'].required = False
+
+    def clean_tags(self):
+        """
+            Transforming tags string to array with whitespace verification
+        """
+        tags_string = self.cleaned_data['tags'].strip()
+        if tags_string == '':
+            self.tags = None
+            return
+
+        tags_array = tags_string.split(',')
+
+        # Removes whitespaces for all tag
+        tags = [t.strip() for t in tags_array]
+        self.tags = []
+        for t in tags:
+            if t == '':
+                continue
+
+            # Checks if tag exists and creates it if not
+            try:
+                filtered = Tag.objects.get(name__exact=t)
+                self.tags.append(filtered)
+            except Tag.DoesNotExist:
+                self.tags.append(Tag.objects.create(name=t))
+
+    def save(self, commit=True):
+        question = super(QuestionEditForm, self).save(commit=commit)
+        question.tags.clear()
+        if self.tags is not None:
+            for t in self.tags:
+                question.tags.add(t)
+        return question
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:

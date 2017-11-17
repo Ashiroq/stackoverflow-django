@@ -23,11 +23,14 @@
             <strong>Text:</strong><textarea readonly>{{ question.text }}</textarea>
         </div>
         <div class="form-field">
-            <stron>Tags: </stron>
-            {% comment %} <input type="text" readonly value="{{ question.tags }}" /> {% endcomment %}
-            {% for t in question.tags %}
-                <a class="tag">{{ t }}</a>
-            {% endfor %}
+            <strong>Tags: </strong>
+            {% if question.tags.all %}
+                {% for t in question.tags.all %}
+                    <a class="tag" href="{% url 'questions:tagged' t.name %}">{{ t }}</a>
+                {% endfor %}
+            {% else %}
+                <p>None</p>
+            {% endif %}
         </div>
         <div class="form-field">
             <strong>Author: </strong><p><a href="{% url 'questions:user' question.owner.id %}">{{ question.owner.username }}</a></p>
