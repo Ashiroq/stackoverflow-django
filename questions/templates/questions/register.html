@@ -32,15 +32,19 @@
             <div class="form-field">
                 <button type="submit">Sign Up</button>
             </div>
-
-            <div class="form-messages">
-                {% for field in register_form %}
-                    {% if field.help_text %}
-                        <p>{{ field.help_text|safe }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
         </form>
+        <p>You can also <a href="{% url 'login' %}">login</a> as guest.</p>
     </div>
-    <div class="right"></div>
+    <div class="right">
+        <div class="form-messages">
+            {% for field in register_form %}
+                {% if field.help_text %}
+                    <div class="form-message">
+                        {{ field.label_tag }}
+                        <p>{{ field.help_text|safe }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock content %}

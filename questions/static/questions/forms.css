@@ -44,7 +44,11 @@ button[type=submit]:hover {
 }
 
 .form-messages {
-    margin-top: 40px;
+    margin-top: 80px;
+}
+
+.form-message {
+    margin: 10px 0px 10px 0px;
 }
 
 .image-field > .image-field-current > img {
