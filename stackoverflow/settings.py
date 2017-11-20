@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'stackoverflow',
         'USER': 'postgres',
-        'PASSWORD': 'a12_3_r',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432'
     }
