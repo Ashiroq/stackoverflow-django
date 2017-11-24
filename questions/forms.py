@@ -45,7 +45,7 @@ class QuestionAskForm(forms.ModelForm):
 
         tags_array = tags_string.split(',')
 
-        # Removes whitespaces for all tag
+        # Removes whitespaces for every tag
         tags = [t.strip() for t in tags_array]
         self.tags = []
         for t in tags:
@@ -69,7 +69,7 @@ class QuestionAskForm(forms.ModelForm):
 class QuestionEditForm(QuestionAskForm):
     def __init__(self, *args, **kwargs):
         super(QuestionEditForm, self).__init__(*args, **kwargs)
-        # Tags queryset to string as CharField initial value
+        # Coverting tags queryset to string to set CharField's initial value
         tags_array = [t.name for t in kwargs['instance'].tags.all()]
         self.fields['tags'].initial = ', '.join(tags_array)
 
@@ -100,8 +100,6 @@ class EmailChangeForm(forms.ModelForm):
         fields = ['email']
 
     def __init__(self, *args, **kwargs):
-        # if instance is None:
-        #     raise ValueError
         super(EmailChangeForm, self).__init__(*args, **kwargs)
 
     def clean(self):

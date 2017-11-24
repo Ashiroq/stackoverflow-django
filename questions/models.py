@@ -6,6 +6,7 @@ from django.utils.deconstruct import deconstructible
 from django.contrib.auth.models import User as AuthUser
 from django.db.models.signals import post_save, post_delete
 from django.contrib.postgres.fields import ArrayField
+from django.core.files.storage import default_storage
 
 # Create your models here.
 
@@ -48,8 +49,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=AuthUser)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
-
-from django.core.files.storage import default_storage
 
 @receiver(post_delete, sender=UserProfile)
 def delete_avatar_file(sender, instance, **kwargs):

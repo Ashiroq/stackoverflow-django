@@ -18,7 +18,6 @@ urlpatterns = [
     url(r'^questions/tagged/(?P<tag>[\w\s\(\)]+)/$', views.TaggedView.as_view(), name='tagged'),
     url(r'^users/(?P<pk>[0-9]+)/$', views.UserView.as_view(), name='user'),
     url(r'^users/(?P<pk>[0-9]+)/edit/$', views.UserEditView.as_view(), name='user_edit'),
-    # url(r'^users/(?P<pk>[0-9]+)/settings/$', views.account_settings, name='user_settings'),
     url(r'^users/(?P<pk>[0-9]+)/settings/$', views.AccountSettings.as_view(), name='user_settings'),
     url(r'^register/$', views.register, name='register')
 ]
