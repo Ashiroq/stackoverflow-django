@@ -2,7 +2,7 @@
 Simple clone of [Stackoverflow](http://stackoverflow.com) created using PostgreSQL and Django.
 
 ## Working example
-If you want to see it working head on to my [Heroku app](http://stackoverflow-django.herokuapp.com) (Please note that Heroku deletes avatars after some time, that's not up to me).
+If you want to see it working head on to my [Heroku app](http://stackoverflow-django.herokuapp.com) (Please note that Heroku removes avatars after every push).
 
 You can log in to guest account with these credentials:
 
