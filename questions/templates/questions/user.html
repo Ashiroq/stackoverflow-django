@@ -27,7 +27,7 @@
         <a class="edit-profile" href="{% url 'questions:user_edit' profile.id %}">Edit profile</a>
         <a class="edit-profile" href="{% url 'questions:user_settings' profile.id %}">Account settings</a>
     {% endif %}
-    <div class="questions section">
+    <div class="questions section" style="clear: both;">
         <h3 class="section-title">Recent questions:</h3>
         {% for q in created_questions %}
         <div class="question">

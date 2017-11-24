@@ -70,13 +70,13 @@
 .profile-data {
     width: 590px;
     margin: 5px;
-    height: 150px;
+    height: 181px;
     float: right;
 }
 
 .profile-description {
     width: 590px;
-    height: 120px;
+    height: 110px;
     overflow: scroll;
 }
 
@@ -85,6 +85,7 @@
     text-align: center;
     border-bottom: 1px rgba(82, 83, 83, 0.39) solid;
     padding-bottom: 5px;
+    margin: 0;
 }
 
 .name {
